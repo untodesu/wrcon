@@ -13,6 +13,7 @@ namespace WRcon
         private readonly object locker = new object();
         private readonly Config config = new Config();
         private RCON rcon = null;
+        private bool busy = false;
 
         public AppWindow()
         {
@@ -78,14 +79,17 @@ namespace WRcon
 
         private async void Connect_Click(object sender, RoutedEventArgs e)
         {
-            W_SetClientStatus(ClientStatus.Connecting);
-            W_PrintText("Connecting to {0}:{1}", rconAddress.Text, rconPort.Text);
+            if(rcon == null && !busy) {
+                busy = true;
 
-            if(rcon == null) {
+                W_SetClientStatus(ClientStatus.Connecting);
+                W_PrintText("Connecting to {0}:{1}", rconAddress.Text, rconPort.Text);
+
                 IPAddress[] ips = Dns.GetHostAddresses(rconAddress.Text);
                 if(ips.Length == 0) {
                     W_SetClientStatus(ClientStatus.Disconnected);
                     W_PrintText("Error: Can't find any IP address for {0}", rconAddress.Text);
+                    busy = false;
                     return;
                 }
 
@@ -98,18 +102,23 @@ namespace WRcon
                     W_SetClientStatus(ClientStatus.Disconnected);
                     W_PrintText("Error: Can't connect ({0})", exc.Message);
                     rcon = null;
+                    busy = false;
                     return;
                 }
-            }
 
-            W_SetClientStatus(ClientStatus.Connected);
-            W_PrintText("Connected!");
+                W_SetClientStatus(ClientStatus.Connected);
+                W_PrintText("Connected!");
+
+                busy = false;
+            }
         }
 
         private void Disconnect_Click(object sender, RoutedEventArgs e)
         {
-            try { rcon?.Dispose(); }
-            catch { }
+            if(!busy) {
+                try { rcon?.Dispose(); }
+                catch { }
+            }
         }
 
         private void Rcon_Disconnected()
@@ -121,7 +130,7 @@ namespace WRcon
 
         private async void Send_Click(object sender, RoutedEventArgs e)
         {
-            if(rcon != null) {
+            if(rcon != null && !busy) {
                 try {
                     if(!String.IsNullOrWhiteSpace(commandData.Text)) {
                         W_PrintText("> {0}", commandData.Text);
