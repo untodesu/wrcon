@@ -18,8 +18,8 @@ namespace WRcon
         public AppWindow()
         {
             InitializeComponent();
-            W_PrintText("WRcon {0}", System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
-            W_SetClientStatus(ClientStatus.Disconnected);
+            PrintText("WRcon {0}", System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
+            SetClientStatus(ClientStatus.Disconnected);
             rconAddress.Text = config.Address;
             rconPort.Text = config.Port;
             rconPassword.Password = config.Password;
@@ -33,7 +33,7 @@ namespace WRcon
             config.Save();
         }
 
-        private void W_SetClientStatus(ClientStatus status)
+        private void SetClientStatus(ClientStatus status)
         {
             lock(locker) {
                 rconStatusLabel.Content = status.Text;
@@ -41,7 +41,7 @@ namespace WRcon
             }
         }
 
-        private void W_PrintText(string text)
+        private void PrintText(string text)
         {
             lock(locker) {
                 output.AppendText(text.Replace('\n', '\r') + "\r");
@@ -49,7 +49,7 @@ namespace WRcon
             }
         }
 
-        private void W_PrintText(string format, params object[] args)
+        private void PrintText(string format, params object[] args)
         {
             lock(locker) {
                 output.AppendText(String.Format(format, args).Replace('\n', '\r') + "\r");
@@ -82,13 +82,13 @@ namespace WRcon
             if(rcon == null && !busy) {
                 busy = true;
 
-                W_SetClientStatus(ClientStatus.Connecting);
-                W_PrintText("Connecting to {0}:{1}", rconAddress.Text, rconPort.Text);
+                SetClientStatus(ClientStatus.Connecting);
+                PrintText("Connecting to {0}:{1}", rconAddress.Text, rconPort.Text);
 
                 IPAddress[] ips = Dns.GetHostAddresses(rconAddress.Text);
                 if(ips.Length == 0) {
-                    W_SetClientStatus(ClientStatus.Disconnected);
-                    W_PrintText("Error: Can't find any IP address for {0}", rconAddress.Text);
+                    SetClientStatus(ClientStatus.Disconnected);
+                    PrintText("Error: Can't find any IP address for {0}", rconAddress.Text);
                     busy = false;
                     return;
                 }
@@ -99,15 +99,15 @@ namespace WRcon
                     await rcon.ConnectAsync();
                 }
                 catch(Exception exc) {
-                    W_SetClientStatus(ClientStatus.Disconnected);
-                    W_PrintText("Error: Can't connect ({0})", exc.Message);
+                    SetClientStatus(ClientStatus.Disconnected);
+                    PrintText("Error: Can't connect ({0})", exc.Message);
                     rcon = null;
                     busy = false;
                     return;
                 }
 
-                W_SetClientStatus(ClientStatus.Connected);
-                W_PrintText("Connected!");
+                SetClientStatus(ClientStatus.Connected);
+                PrintText("Connected!");
 
                 busy = false;
             }
@@ -123,8 +123,8 @@ namespace WRcon
 
         private void Rcon_Disconnected()
         {
-            W_SetClientStatus(ClientStatus.Disconnected);
-            W_PrintText("Disconnected!");
+            SetClientStatus(ClientStatus.Disconnected);
+            PrintText("Disconnected!");
             rcon = null;
         }
 
@@ -133,10 +133,10 @@ namespace WRcon
             if(rcon != null && !busy) {
                 try {
                     if(!String.IsNullOrWhiteSpace(commandData.Text)) {
-                        W_PrintText("> {0}", commandData.Text);
+                        PrintText("> {0}", commandData.Text);
                         string response = await rcon.SendCommandAsync(commandData.Text);
                         if(!String.IsNullOrWhiteSpace(response))
-                            W_PrintText(Regex.Replace(response, "[\\r\\n]+", "\r"));
+                            PrintText(Regex.Replace(response, "[\\r\\n]+", "\r"));
                     }
                     commandData.Text = String.Empty;
                 }
