@@ -1,9 +1,11 @@
 # WRcon
 A WPF RCON client.  
 ![](media/screenshot01.png)
+
 ## Features
 * Lightweight (less than 1 MiB with dependency binaries)
 * Saves credentials to a somewhat encrypted file
+
 ## Installation
 1. Go to the [releases](https://github.com/undnull/wrcon/releases)
 2. Select the latest one
@@ -12,6 +14,7 @@ A WPF RCON client.
 5. Run the `WRcon.exe`
 6. ?????
 7. PROFIT!
+
 ## Usage
 ![](media/readme01.png)
 * **Address:** an IP address or a hostname.
@@ -20,6 +23,7 @@ A WPF RCON client.
 * **Status:** connection status.
 * **Connect:** use entered credentials and try to connect to the server.
 * **D:** disconnect if connected.
+
 ## License
 ```
 MIT License
@@ -44,6 +48,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
 ## Third-party software:
 ```
 MIT License
