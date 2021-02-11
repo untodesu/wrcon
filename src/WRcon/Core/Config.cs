@@ -19,7 +19,7 @@ namespace WRcon.Core
 
         public Config(string filename = ".wrcon")
         {
-            Filename = filename;
+            Filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), filename);
             if(File.Exists(Filename)) {
                 try {
                     using(FileStream fs = new FileStream(Filename, FileMode.Open, FileAccess.Read)) {
@@ -56,7 +56,7 @@ namespace WRcon.Core
                         }
                     }
                 }
-
+                File.SetAttributes(Filename, File.GetAttributes(Filename) | FileAttributes.Hidden);
             }
             catch { }
         }
