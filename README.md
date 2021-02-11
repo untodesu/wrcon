@@ -1,5 +1,5 @@
 # WRcon
-A WPF RCON client.
+A WPF RCON client.  
 ![](media/screenshot01.png)
 ## Features
 * Lightweight (less than 1 MiB with dependency binaries)
